@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.trading.display"
+    tools:ignore="MissingLeanbackLauncher">
+
+    <!-- 申请网络的权限 -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- 申请开发音频的权限 -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <!-- 检查当前网络状态 -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"></uses-permission>
+    <!-- 开机自启动 -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"></uses-permission>
+
+    <!--  因为电视一般不支持触屏，所以需要声明一下权限 -->
+    <uses-feature
+        android:name="android.hardware.touchscreen"
+        android:required="false" />
+    <!-- 使用一些TV下面的控件时，需要的声明 如果你的应用要同时运行在手机、平板、
+          以及电视设备上，需要将required属性设置为false，如果设置为true那么应用只能运行在使用Leanback UI的设备上。 -->
+    <uses-feature
+        android:name="android.software.leanback"
+        android:required="false" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme.NoTitle">
+        <activity
+            android:name=".activity.TVMainActivity"
+            android:banner="@drawable/app_icon_your_company"
+            android:icon="@drawable/app_icon_your_company"
+            android:label="@string/app_name"
+            android:logo="@drawable/app_icon_your_company"
+            android:screenOrientation="landscape"
+            android:launchMode="singleTop"
+            >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <!-- 这个地方与手机端开发区别较大，这个主要是声明了这是一个TV项目，如果不加这个，那么运行在TV上时，是找不到这个应用的运行图标的 -->
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".DetailsActivity" />
+        <activity android:name=".PlaybackActivity" />
+        <activity android:name=".BrowseErrorActivity" />
+
+        <!--  定时服务 -->
+        <service
+            android:name ="com.trading.display.service.AlarmService"
+            >
+        </service>
+        <!--  定时接收广播 -->
+        <receiver
+            android:name="com.trading.display.service.AlarmReceiver"
+            >
+        </receiver>
+        <!--
+        开机自启动广播 经过测试TV不支持，必须将设备root过后，将应用设置为系统应用
+        借鉴网址：https://www.cnblogs.com/jetereting/p/4572302.html
+        借鉴网址：https://www.cnblogs.com/yunfang/archive/2016/03/10/5262393.html
+        或者应用使用系统签名可解决问题
+        系统签名：https://www.jianshu.com/p/63d699cffa1a
+        -->
+        <receiver
+            android:name="com.trading.display.service.MyReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter android:priority="1000">
+                <action android:name="android.intent.action.BOOT_COMPLETED"></action>
+                <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED"></action>
+            </intent-filter>
+        </receiver>
+
+    </application>
+
+</manifest>
